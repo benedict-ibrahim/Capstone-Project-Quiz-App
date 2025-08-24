@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root { 
+    --brand: 99 102 241; 
+}
+.btn { 
+    @apply px-4 py-2 rounded-xl font-medium shadow-soft transition active:scale-[0.98]; 
+}
+.btn-primary { 
+    @apply bg-indigo-600 text-white hover:bg-indigo-700; 
+}
+.btn-outline { 
+    @apply border border-gray-300 hover:bg-gray-100; 
+}
+.card { 
+    @apply bg-white rounded-2xl shadow-soft p-6; 
+}
+.input { 
+    @apply w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500; 
+}
+.select { 
+    @apply w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white; 
+}

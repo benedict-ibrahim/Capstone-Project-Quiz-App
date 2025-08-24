@@ -1,24 +1,21 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout';
-import QuizStart from './pages/QuizStart';
-import Quiz from './pages/Quiz';
-import Results from './pages/Results';
-import History from './pages/History';
-import NotFound from './pages/NotFound'; // We'll create this later
+import { useState } from "react";
+import QuizStart from "./components/QuizStart";
 
 function App() {
+  const [quizSettings, setQuizSettings] = useState(null);
+
   return (
-    <Router>
-      <Layout> {/* Wrap all routes in a common layout */}
-        <Routes>
-          <Route path="/" element={<QuizStart />} />
-          <Route path="/quiz" element={<Quiz />} />
-          <Route path="/results" element={<Results />} />
-          <Route path="/history" element={<History />} />
-          <Route path="*" element={<NotFound />} /> {/* Catch unmatched routes */}
-        </Routes>
-      </Layout>
-    </Router>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      {!quizSettings ? (
+        <QuizStart onStart={setQuizSettings} />
+      ) : (
+        <div>
+          {/* Placeholder – will show quiz questions here later */}
+          <h2 className="text-2xl font-bold">Quiz starting soon...</h2>
+          <pre>{JSON.stringify(quizSettings, null, 2)}</pre>
+        </div>
+      )}
+    </div>
   );
 }
 
