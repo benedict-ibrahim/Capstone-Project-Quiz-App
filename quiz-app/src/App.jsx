@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import QuizStart from "./components/QuizStart";
 import QuestionCard from "./components/QuestionCard";
+import ScoreSummary from "./components/ScoreSummary";
 
 function App() {
   const [quizSettings, setQuizSettings] = useState(null);
@@ -8,6 +9,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
+  const [userAnswers, setUserAnswers] = useState([]);
 
   // Fetch questions once settings are chosen
   useEffect(() => {
@@ -23,7 +25,6 @@ function App() {
     fetch(url)
       .then((res) => res.json())
       .then((data) => {
-        // Format questions with shuffled answers
         const formatted = data.results.map((q) => {
           const answers = [...q.incorrect_answers];
           const randomIndex = Math.floor(Math.random() * (answers.length + 1));
@@ -38,10 +39,21 @@ function App() {
 
   const handleAnswer = (answer) => {
     const currentQuestion = questions[currentIndex];
+
     if (answer === currentQuestion.correct_answer) {
       setScore((prev) => prev + 1);
     }
+
+    setUserAnswers((prev) => [...prev, answer]);
     setCurrentIndex((prev) => prev + 1);
+  };
+
+  const restartQuiz = () => {
+    setQuizSettings(null);
+    setQuestions([]);
+    setCurrentIndex(0);
+    setScore(0);
+    setUserAnswers([]);
   };
 
   // Show Start Screen
@@ -64,27 +76,15 @@ function App() {
     );
   }
 
-  // Final Score (we’ll build ScoreSummary in Step 4)
+  // Show Final Summary
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white p-6 rounded-xl shadow-lg text-center">
-        <h2 className="text-2xl font-bold mb-4">Quiz Finished!</h2>
-        <p className="text-lg">
-          You scored <span className="font-bold">{score}</span> out of{" "}
-          {questions.length}
-        </p>
-        <button
-          className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
-          onClick={() => {
-            setQuizSettings(null);
-            setQuestions([]);
-            setCurrentIndex(0);
-            setScore(0);
-          }}
-        >
-          Take another quiz
-        </button>
-      </div>
+      <ScoreSummary
+        questions={questions}
+        userAnswers={userAnswers}
+        score={score}
+        onRestart={restartQuiz}
+      />
     </div>
   );
 }
