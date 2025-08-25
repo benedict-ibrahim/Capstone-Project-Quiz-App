@@ -103,6 +103,12 @@ function QuizStart({ onStart }) {
         >
           Start Quiz
         </button>
+        <button
+  onClick={onViewHistory}
+  className="w-full bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600"
+>
+</button>
+
       </form>
     </div>
   );
