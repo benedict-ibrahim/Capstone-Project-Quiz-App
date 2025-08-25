@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import QuizStart from "./components/QuizStart";
 import QuestionCard from "./components/QuestionCard";
 import ScoreSummary from "./components/ScoreSummary";
+import QuizHistory from "./components/QuizHistory";
 
 function App() {
   const [quizSettings, setQuizSettings] = useState(null);
@@ -10,8 +11,9 @@ function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [userAnswers, setUserAnswers] = useState([]);
+  const [quizHistory, setQuizHistory] = useState([]);
 
-  // Fetch questions once settings are chosen
+  // Fetch questions from API
   useEffect(() => {
     if (!quizSettings) return;
 
@@ -49,6 +51,18 @@ function App() {
   };
 
   const restartQuiz = () => {
+    // Save quiz result before restarting
+    setQuizHistory((prev) => [
+      ...prev,
+      {
+        ...quizSettings,
+        score,
+        total: questions.length,
+        date: new Date().toLocaleString(),
+      },
+    ]);
+
+    // Reset states
     setQuizSettings(null);
     setQuestions([]);
     setCurrentIndex(0);
@@ -57,10 +71,27 @@ function App() {
   };
 
   // Show Start Screen
-  if (!quizSettings) return <QuizStart onStart={setQuizSettings} />;
+  if (!quizSettings) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+        <QuizStart onStart={setQuizSettings} />
+        {quizHistory.length > 0 && (
+          <div className="mt-8 w-full max-w-lg">
+            <QuizHistory history={quizHistory} />
+          </div>
+        )}
+      </div>
+    );
+  }
 
   // Show Loading
-  if (loading) return <div className="text-center text-xl">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 text-xl">
+        Loading questions...
+      </div>
+    );
+  }
 
   // Show Questions
   if (currentIndex < questions.length) {
