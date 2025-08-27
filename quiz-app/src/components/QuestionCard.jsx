@@ -1,25 +1,34 @@
-const QuestionCard = ({ question, questionNumber, totalQuestions, onAnswer }) => {
+/* eslint-disable react/prop-types */
+export default function QuestionCard({
+  question,
+  questionNumber,
+  totalQuestions,
+  onAnswer,
+}) {
   return (
-    <div className="bg-white p-6 rounded-xl shadow-lg max-w-xl w-full">
-      <h2 className="text-lg font-semibold mb-4">
-        Question {questionNumber} of {totalQuestions}
-      </h2>
-      <p
-        className="mb-4 text-gray-800"
+    <div className="bg-white shadow-xl rounded-2xl p-6 max-w-xl w-full text-center">
+      {/* Question counter */}
+      <p className="text-gray-600 mb-4 font-medium">
+        Question {questionNumber} / {totalQuestions}
+      </p>
+
+      {/* Question text */}
+      <h2
+        className="text-lg font-semibold text-gray-800 mb-6"
         dangerouslySetInnerHTML={{ __html: question.question }}
       />
-      <div className="space-y-2">
-        {question.answers.map((ans, idx) => (
+
+      {/* Answer buttons */}
+      <div className="grid gap-3">
+        {question.answers.map((answer, i) => (
           <button
-            key={idx}
-            className="w-full bg-gray-200 hover:bg-gray-300 text-left p-2 rounded-lg"
-            onClick={() => onAnswer(ans)}
-            dangerouslySetInnerHTML={{ __html: ans }}
+            key={i}
+            onClick={() => onAnswer(answer)}
+            className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition text-sm md:text-base"
+            dangerouslySetInnerHTML={{ __html: answer }}
           />
         ))}
       </div>
     </div>
   );
-};
-
-export default QuestionCard;
+}

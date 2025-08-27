@@ -1,15 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
-function QuizStart({ onStart }) {
+export default function QuizStart({ onStart }) {
   const [categories, setCategories] = useState([]);
-  const [settings, setSettings] = useState({
-    category: "",
-    difficulty: "",
-    amount: 5,
-  });
-  const [searchTerm, setSearchTerm] = useState("");
+  const [category, setCategory] = useState("");
+  const [difficulty, setDifficulty] = useState("");
+  const [amount, setAmount] = useState(5);
 
-  // Fetch quiz categories
+  // Fetch categories on mount
   useEffect(() => {
     fetch("https://opentdb.com/api_category.php")
       .then((res) => res.json())
@@ -17,101 +14,83 @@ function QuizStart({ onStart }) {
       .catch((err) => console.error("Error fetching categories:", err));
   }, []);
 
-  const handleChange = (e) => {
-    setSettings({ ...settings, [e.target.name]: e.target.value });
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    onStart(settings);
+
+    onStart({
+      category, // this is ID
+      difficulty,
+      amount,
+    });
   };
 
-  // Filter categories by search term
-  const filteredCategories = categories.filter((cat) =>
-    cat.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
-    <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
-      <h1 className="text-2xl font-bold text-center mb-4">Start Quiz</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600">
+      <div className="bg-white shadow-lg rounded-2xl p-8 max-w-md w-full">
+        <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
+          🎯 Start Your Quiz
+        </h1>
 
-      {/* 🔍 Search Bar */}
-      <input
-        type="text"
-        placeholder="Search categories..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-      />
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Category */}
-        <div>
-          <label className="block mb-1 font-medium">Category</label>
-          <select
-            name="category"
-            value={settings.category}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md"
-          >
-            <option value="">Any Category</option>
-            {filteredCategories.length > 0 ? (
-              filteredCategories.map((cat) => (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Category Select */}
+          <div>
+            <label className="block font-medium text-gray-700 mb-1">
+              Category
+            </label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Any Category</option>
+              {categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>
                   {cat.name}
                 </option>
-              ))
-            ) : (
-              <option disabled>No categories found</option>
-            )}
-          </select>
-        </div>
+              ))}
+            </select>
+          </div>
 
-        {/* Difficulty */}
-        <div>
-          <label className="block mb-1 font-medium">Difficulty</label>
-          <select
-            name="difficulty"
-            value={settings.difficulty}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+          {/* Difficulty Select */}
+          <div>
+            <label className="block font-medium text-gray-700 mb-1">
+              Difficulty
+            </label>
+            <select
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Any Difficulty</option>
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+
+          {/* Amount Input */}
+          <div>
+            <label className="block font-medium text-gray-700 mb-1">
+              Number of Questions
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="20"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition"
           >
-            <option value="">Any</option>
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
-          </select>
-        </div>
-
-        {/* Number of Questions */}
-        <div>
-          <label className="block mb-1 font-medium">Number of Questions</label>
-          <input
-            type="number"
-            name="amount"
-            min="1"
-            max="20"
-            value={settings.amount}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
-        >
-          Start Quiz
-        </button>
-        <button
-  onClick={onViewHistory}
-  className="w-full bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600"
->
-</button>
-
-      </form>
+            🚀 Start Quiz
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
-
-export default QuizStart;
